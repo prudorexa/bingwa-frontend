@@ -1,16 +1,16 @@
 <template>
-    <div class="container mx-auto p-4">
-      <h1 class="text-2xl font-bold mb-4">Lead Management</h1>
+    <div class="container mx-auto p-4 md:p-8">
+      <h1 class="text-2xl font-bold mb-6">Lead Management</h1>
   
       <!-- Search and Filter -->
-      <div class="mb-4">
+      <div class="mb-6 flex flex-col md:flex-row md:items-center">
         <input
           v-model="searchQuery"
-          class="border p-2 rounded-md"
+          class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow"
           type="text"
           placeholder="Search by company name or email..."
         />
-        <select v-model="leadStatusFilter" class="border p-2 rounded-md ml-2">
+        <select v-model="leadStatusFilter" class="border border-gray-300 p-2 rounded-md w-full md:w-auto">
           <option value="">All Statuses</option>
           <option value="New">New</option>
           <option value="Contacted">Contacted</option>
@@ -20,20 +20,20 @@
       </div>
   
       <!-- Lead Form -->
-      <form @submit.prevent="addOrUpdateLead" class="mb-4">
+      <form @submit.prevent="addOrUpdateLead" class="mb-6 flex flex-col md:flex-row md:items-center">
         <input
           v-model="newLead.name"
-          class="border p-2 rounded-md mr-2"
+          class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow"
           type="text"
           placeholder="Company Name"
         />
         <input
           v-model="newLead.email"
-          class="border p-2 rounded-md mr-2"
+          class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow"
           type="email"
           placeholder="Email"
         />
-        <select v-model="newLead.status" class="border p-2 rounded-md mr-2">
+        <select v-model="newLead.status" class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow">
           <option value="">Select Status</option>
           <option value="New">New</option>
           <option value="Contacted">Contacted</option>
@@ -42,72 +42,74 @@
         </select>
         <button
           type="submit"
-          class="bg-blue-600 text-white px-4 py-2 rounded-md"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md w-full md:w-auto"
         >
           {{ editing ? 'Update' : 'Add' }} Lead
         </button>
       </form>
   
       <!-- Leads Table -->
-      <table class="min-w-full bg-white border">
-        <thead>
-          <tr>
-            <th class="py-2 px-4 border">Company Name</th>
-            <th class="py-2 px-4 border">Email</th>
-            <th class="py-2 px-4 border">Status</th>
-            <th class="py-2 px-4 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="lead in filteredLeads"
-            :key="lead.id"
-            class="text-center"
-          >
-            <td class="py-2 px-4 border">{{ lead.name }}</td>
-            <td class="py-2 px-4 border">{{ lead.email }}</td>
-            <td class="py-2 px-4 border">{{ lead.status }}</td>
-            <td class="py-2 px-4 border">
-              <button
-                @click="editLead(lead)"
-                class="text-blue-500 mr-2"
-              >
-                Edit
-              </button>
-              <button
-                @click="deleteLead(lead.id)"
-                class="text-red-500"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300 rounded-md shadow-md">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="py-3 px-4 border-b text-left">Company Name</th>
+              <th class="py-3 px-4 border-b text-left">Email</th>
+              <th class="py-3 px-4 border-b text-left">Status</th>
+              <th class="py-3 px-4 border-b text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="lead in filteredLeads"
+              :key="lead.id"
+              class="hover:bg-gray-100"
+            >
+              <td class="py-2 px-4 border-b">{{ lead.name }}</td>
+              <td class="py-2 px-4 border-b">{{ lead.email }}</td>
+              <td class="py-2 px-4 border-b">{{ lead.status }}</td>
+              <td class="py-2 px-4 border-b flex items-center space-x-2">
+                <button
+                  @click="editLead(lead)"
+                  class="text-blue-500 hover:text-blue-700"
+                >
+                  Edit
+                </button>
+                <button
+                  @click="deleteLead(lead.id)"
+                  class="text-red-500 hover:text-red-700"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
   
       <!-- Interaction Tracking -->
-      <div v-if="selectedLead" class="mt-6">
-        <h2 class="text-xl font-bold">Interactions for {{ selectedLead.name }}</h2>
-        <ul class="list-disc list-inside">
+      <div v-if="selectedLead" class="mt-8">
+        <h2 class="text-xl font-bold mb-4">Interactions for {{ selectedLead.name }}</h2>
+        <ul class="list-disc list-inside mb-4">
           <li v-for="interaction in selectedLead.interactions" :key="interaction.id">
             {{ interaction.type }} - {{ interaction.details }}
           </li>
         </ul>
-        <form @submit.prevent="addInteraction" class="mt-4">
-          <select v-model="newInteraction.type" class="border p-2 rounded-md mr-2">
+        <form @submit.prevent="addInteraction" class="flex flex-col md:flex-row md:items-center">
+          <select v-model="newInteraction.type" class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow">
             <option value="">Select Interaction Type</option>
             <option value="Phone Call">Phone Call</option>
             <option value="Email">Email</option>
           </select>
           <input
             v-model="newInteraction.details"
-            class="border p-2 rounded-md mr-2"
+            class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow"
             type="text"
             placeholder="Details"
           />
           <button
             type="submit"
-            class="bg-green-600 text-white px-4 py-2 rounded-md"
+            class="bg-green-600 text-white px-4 py-2 rounded-md w-full md:w-auto"
           >
             Add Interaction
           </button>
@@ -117,6 +119,8 @@
   </template>
   
   <script>
+  import axios from 'axios';
+  
   export default {
     data() {
       return {
@@ -142,6 +146,19 @@
       },
     },
     methods: {
+      async fetchLeads() {
+        try {
+          const response = await axios.get('/api/leads', {
+            params: {
+              search: this.searchQuery,
+              status: this.leadStatusFilter,
+            },
+          });
+          this.leads = response.data;
+        } catch (error) {
+          console.error('Error fetching leads:', error);
+        }
+      },
       addOrUpdateLead() {
         if (this.editing) {
           const index = this.leads.findIndex((lead) => lead.id === this.newLead.id);
@@ -178,16 +195,16 @@
       },
     },
     watch: {
-      newLead(newVal) {
-        this.selectedLead = this.leads.find((lead) => lead.id === newVal.id);
-      },
+      searchQuery: 'fetchLeads',
+      leadStatusFilter: 'fetchLeads',
     },
   };
   </script>
   
   <style scoped>
+  /* Optional: Customize additional styles if needed */
   .container {
-    max-width: 800px;
+    max-width: 1200px;
   }
   </style>
   

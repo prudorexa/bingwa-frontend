@@ -14,7 +14,7 @@
           <p class="mt-2 text-gray-600">Manage users, assign roles, and review activity logs.</p>
           <div class="mt-4">
             <a href="#" @click="showUserForm = true" class="text-blue-500 hover:underline inline-block">Add New User</a>
-            <a href="#" @click="viewUsers" class="text-blue-500 hover:underline inline-block ml-4">View Users</a>
+            <a href="#" @click="fetchUsers" class="text-blue-500 hover:underline inline-block ml-4">View Users</a>
           </div>
 
           <!-- User List -->
@@ -65,7 +65,7 @@
           <p class="mt-2 text-gray-600">Manage projects, assign them to users, and review progress.</p>
           <div class="mt-4">
             <a href="#" @click="showProjectForm = true" class="text-blue-500 hover:underline inline-block">Add New Project</a>
-            <a href="#" @click="viewProjects" class="text-blue-500 hover:underline inline-block ml-4">View Projects</a>
+            <a href="#" @click="fetchProjects" class="text-blue-500 hover:underline inline-block ml-4">View Projects</a>
           </div>
 
           <!-- Project List -->
@@ -107,6 +107,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'AdminDashboard',
   data() {
@@ -129,88 +131,102 @@ export default {
     };
   },
   methods: {
-    viewUsers() {
-      this.users = [
-        { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Project Manager' },
-      ];
-    },
-    viewProjects() {
-      this.projects = [
-        { id: 1, name: 'Project Alpha', description: 'This is a sample project.' },
-        { id: 2, name: 'Project Beta', description: 'This is another sample project.' },
-      ];
-    },
-    submitUserForm() {
-      if (this.editUserId !== null) {
-        const user = this.users.find(u => u.id === this.editUserId);
-        if (user) {
-          user.name = this.userForm.name;
-          user.email = this.userForm.email;
-          user.role = this.userForm.role;
-        }
-      } else {
-        this.users.push({
-          id: Date.now(),
-          name: this.userForm.name,
-          email: this.userForm.email,
-          role: this.userForm.role,
-        });
+    async fetchUsers() {
+      try {
+        const response = await axios.get('/api/users'); // Adjust the endpoint as needed
+        this.users = response.data;
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
       }
-      this.cancelUserForm();
     },
-    editUser(user) {
+    async fetchProjects() {
+      try {
+        const response = await axios.get('/api/projects'); // Adjust the endpoint as needed
+        this.projects = response.data;
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
+      }
+    },
+    async submitUserForm() {
+      try {
+        if (this.editUserId !== null) {
+          await axios.put(`/api/users/${this.editUserId}`, this.userForm); // Adjust the endpoint as needed
+        } else {
+          await axios.post('/api/users', this.userForm); // Adjust the endpoint as needed
+        }
+        this.cancelUserForm();
+        this.fetchUsers(); // Refresh the user list
+      } catch (error) {
+        console.error('Failed to submit user form:', error);
+      }
+    },
+    async editUser(user) {
       this.showUserForm = true;
       this.userForm.name = user.name;
       this.userForm.email = user.email;
       this.userForm.role = user.role;
       this.editUserId = user.id;
     },
-    deleteUser(userId) {
-      this.users = this.users.filter(u => u.id !== userId);
+    async deleteUser(userId) {
+      try {
+        await axios.delete(`/api/users/${userId}`); // Adjust the endpoint as needed
+        this.users = this.users.filter(u => u.id !== userId);
+      } catch (error) {
+        console.error('Failed to delete user:', error);
+      }
     },
     cancelUserForm() {
       this.showUserForm = false;
-      this.userForm.name = '';
-      this.userForm.email = '';
-      this.userForm.role = 'Admin';
+      this.userForm = {
+        name: '',
+        email: '',
+        role: 'Admin',
+      };
       this.editUserId = null;
     },
-    submitProjectForm() {
-      if (this.editProjectId !== null) {
-        const project = this.projects.find(p => p.id === this.editProjectId);
-        if (project) {
-          project.name = this.projectForm.name;
-          project.description = this.projectForm.description;
+    async submitProjectForm() {
+      try {
+        if (this.editProjectId !== null) {
+          await axios.put(`/api/projects/${this.editProjectId}`, this.projectForm); // Adjust the endpoint as needed
+        } else {
+          await axios.post('/api/projects', this.projectForm); // Adjust the endpoint as needed
         }
-      } else {
-        this.projects.push({
-          id: Date.now(),
-          name: this.projectForm.name,
-          description: this.projectForm.description,
-        });
+        this.cancelProjectForm();
+        this.fetchProjects(); // Refresh the project list
+      } catch (error) {
+        console.error('Failed to submit project form:', error);
       }
-      this.cancelProjectForm();
     },
-    editProject(project) {
+    async editProject(project) {
       this.showProjectForm = true;
       this.projectForm.name = project.name;
       this.projectForm.description = project.description;
       this.editProjectId = project.id;
     },
-    deleteProject(projectId) {
-      this.projects = this.projects.filter(p => p.id !== projectId);
+    async deleteProject(projectId) {
+      try {
+        await axios.delete(`/api/projects/${projectId}`); // Adjust the endpoint as needed
+        this.projects = this.projects.filter(p => p.id !== projectId);
+      } catch (error) {
+        console.error('Failed to delete project:', error);
+      }
     },
     cancelProjectForm() {
       this.showProjectForm = false;
-      this.projectForm.name = '';
-      this.projectForm.description = '';
+      this.projectForm = {
+        name: '',
+        description: '',
+      };
       this.editProjectId = null;
     },
+  },
+  mounted() {
+    this.fetchUsers();
+    this.fetchProjects();
   },
 };
 </script>
 
 <style scoped>
-/* Custom styles if needed */
+/* Add your styles here */
 </style>
