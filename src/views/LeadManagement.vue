@@ -81,6 +81,12 @@
                 >
                   Delete
                 </button>
+                <button
+                  @click="selectLeadForInteraction(lead)"
+                  class="text-green-500 hover:text-green-700"
+                >
+                  Track Interactions
+                </button>
               </td>
             </tr>
           </tbody>
@@ -92,7 +98,7 @@
         <h2 class="text-xl font-bold mb-4">Interactions for {{ selectedLead.name }}</h2>
         <ul class="list-disc list-inside mb-4">
           <li v-for="interaction in selectedLead.interactions" :key="interaction.id">
-            {{ interaction.type }} - {{ interaction.details }}
+            {{ interaction.type }} - {{ interaction.details }} ({{ interaction.date }})
           </li>
         </ul>
         <form @submit.prevent="addInteraction" class="flex flex-col md:flex-row md:items-center">
@@ -100,12 +106,19 @@
             <option value="">Select Interaction Type</option>
             <option value="Phone Call">Phone Call</option>
             <option value="Email">Email</option>
+            <option value="Meeting">Meeting</option>
+            <option value="Other">Other</option>
           </select>
           <input
             v-model="newInteraction.details"
             class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow"
             type="text"
             placeholder="Details"
+          />
+          <input
+            v-model="newInteraction.date"
+            class="border border-gray-300 p-2 rounded-md mb-4 md:mb-0 md:mr-4 flex-grow"
+            type="date"
           />
           <button
             type="submit"
@@ -127,10 +140,10 @@
         leads: [],
         searchQuery: '',
         leadStatusFilter: '',
-        newLead: { id: null, name: '', email: '', status: '' },
+        newLead: { id: null, name: '', email: '', status: '', interactions: [] },
         editing: false,
         selectedLead: null,
-        newInteraction: { type: '', details: '' },
+        newInteraction: { type: '', details: '', date: '' },
       };
     },
     computed: {
@@ -168,7 +181,6 @@
           this.editing = false;
         } else {
           this.newLead.id = Date.now();
-          this.newLead.interactions = [];
           this.leads.push({ ...this.newLead });
         }
         this.resetForm();
@@ -181,7 +193,10 @@
         this.leads = this.leads.filter((lead) => lead.id !== id);
       },
       resetForm() {
-        this.newLead = { id: null, name: '', email: '', status: '' };
+        this.newLead = { id: null, name: '', email: '', status: '', interactions: [] };
+      },
+      selectLeadForInteraction(lead) {
+        this.selectedLead = { ...lead };
       },
       addInteraction() {
         if (this.selectedLead) {
@@ -189,8 +204,9 @@
             id: Date.now(),
             type: this.newInteraction.type,
             details: this.newInteraction.details,
+            date: this.newInteraction.date,
           });
-          this.newInteraction = { type: '', details: '' };
+          this.newInteraction = { type: '', details: '', date: '' };
         }
       },
     },

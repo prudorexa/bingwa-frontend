@@ -8,6 +8,10 @@ import HomeView from '../views/HomeView.vue';
 import LeadManagement from '@/views/LeadManagement.vue';
 import ProjectPage from '@/views/ProjectPage.vue';
 import UserProfile from '@/views/UserProfile.vue'; // Import UserProfile component
+import TasksPage from '@/views/TasksPage.vue'; // Import TasksPage component
+import TeamPage from '@/views/TeamPage.vue'; // Import TeamPage component
+import ReportsPage from '@/views/ReportsPage.vue'; // Import ReportsPage component
+import ProjectsPage from '@/views/ProjectsPage.vue'; // Import ProjectsPage component
 
 const routes = [
   { path: '/', component: HomeView },
@@ -18,7 +22,11 @@ const routes = [
   { path: '/project-manager-dashboard', component: ProjectManagerDashboard },
   { path: '/engineer-dashboard', component: EngineerDashboard },
   { path: '/project-page', component: ProjectPage },
-  { path: '/profile', component: UserProfile }, // Add UserProfile route
+  { path: '/profile', component: UserProfile },
+  { path: '/tasks', component: TasksPage }, // Add TasksPage route
+  { path: '/team', component: TeamPage }, // Add TeamPage route
+  { path: '/reports', component: ReportsPage }, // Add ReportsPage route
+  { path: '/projects', component: ProjectsPage }, // Add ProjectsPage route
 ];
 
 const router = createRouter({
@@ -27,6 +35,7 @@ const router = createRouter({
 });
 
 export default router;
+
 
 
 
@@ -40,13 +49,15 @@ export default router;
 // import AboutView from '../views/AboutView.vue';
 // import HomeView from '../views/HomeView.vue';
 // import LeadManagement from '@/views/LeadManagement.vue';
+// import ProjectPage from '@/views/ProjectPage.vue';
+// import UserProfile from '@/views/UserProfile.vue'; // Import UserProfile component
 
 // const routes = [
 //   { path: '/', component: HomeView },
 //   { path: '/about', component: AboutView },
 //   { path: '/lead-management', component: LeadManagement },
 //   { path: '/login', component: UserLogin },
-  
+
 //   // Role-based routes
 //   {
 //     path: '/admin-dashboard',
@@ -68,7 +79,7 @@ export default router;
 //       if (role === 'Manager') {
 //         next();
 //       } else {
-//         next('/login');
+//         next('/login'); // Redirect to login if not authorized
 //       }
 //     }
 //   },
@@ -80,10 +91,12 @@ export default router;
 //       if (role === 'Engineer') {
 //         next();
 //       } else {
-//         next('/login');
+//         next('/login'); // Redirect to login if not authorized
 //       }
 //     }
 //   },
+//   { path: '/project-page', component: ProjectPage },
+//   { path: '/profile', component: UserProfile }, // Add UserProfile route
 // ];
 
 // const router = createRouter({
