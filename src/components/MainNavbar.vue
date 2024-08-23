@@ -5,8 +5,8 @@
         <!-- Logo -->
         <div class="flex items-center">
           <img
-            class="h-8 w-auto"
-            src="https://via.placeholder.com/150x50.png?text=Bingwa+Services"
+            class="h-10 w-auto"
+            src="src/assets/images/bingwa.png"
             alt="Bingwa Services"
           />
         </div>
@@ -52,7 +52,7 @@
             :exact-active-class="link.activeClass"
           >{{ link.name }}</router-link>
 
-          <!-- Dropdown for Dashboards, Project and Profile Links -->
+          <!-- Dropdown for Dashboards -->
           <div class="relative">
             <button @click="toggleDropdown" class="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
               Dashboards & More
@@ -67,9 +67,35 @@
                 :to="link.path"
                 class="block px-4 py-2 text-sm font-medium hover:bg-gray-700"
                 :exact-active-class="link.activeClass"
+                @click="dropdownOpen = false"
               >{{ link.name }}</router-link>
+              <router-link
+                v-if="isLoggedIn"
+                :to="'/profile'"
+                class="block px-4 py-2 text-sm font-medium hover:bg-gray-700"
+                @click="dropdownOpen = false"
+              >
+                Profile
+              </router-link>
             </div>
           </div>
+
+          <!-- Login and Logout links -->
+          <router-link
+            v-if="!isLoggedIn"
+            :to="'/login'"
+            class="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+            @click="isOpen = false"
+          >
+            Login
+          </router-link>
+          <button
+            v-if="isLoggedIn"
+            @click="logout"
+            class="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>
@@ -82,6 +108,7 @@
           :to="link.path"
           class="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium"
           :exact-active-class="link.activeClass"
+          @click="isOpen = false"
         >{{ link.name }}</router-link>
         <div class="relative">
           <button @click="toggleDropdownMobile" class="text-white px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 w-full text-left">
@@ -97,7 +124,23 @@
               :to="link.path"
               class="block px-4 py-2 text-sm font-medium hover:bg-gray-700"
               :exact-active-class="link.activeClass"
+              @click="dropdownOpenMobile = false"
             >{{ link.name }}</router-link>
+            <router-link
+              v-if="!isLoggedIn"
+              :to="'/login'"
+              class="block px-4 py-2 text-sm font-medium hover:bg-gray-700"
+              @click="dropdownOpenMobile = false"
+            >
+              Login
+            </router-link>
+            <button
+              v-if="isLoggedIn"
+              @click="logout"
+              class="block w-full text-left px-4 py-2 text-sm font-medium hover:bg-gray-700"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>
@@ -113,10 +156,10 @@ export default {
       isOpen: false,
       dropdownOpen: false,
       dropdownOpenMobile: false,
+      isLoggedIn: false, // Set this to true if the user is logged in
       navLinks: [
         { name: 'Home', path: '/', activeClass: 'bg-gray-700' },
-        { name: 'About', path: '/about', activeClass: 'bg-gray-700' },
-        { name: 'Login', path: '/login', activeClass: 'bg-gray-700' },
+        { name: 'Profile', path: '/profile', activeClass: 'bg-gray-700' }, // Replaced About with Profile
         { name: 'Lead Management', path: '/lead-management', activeClass: 'bg-gray-700' },
       ],
       dashboardLinks: [
@@ -124,7 +167,6 @@ export default {
         { name: 'Project Manager Dashboard', path: '/project-manager-dashboard', activeClass: 'bg-gray-700' },
         { name: 'Engineer Dashboard', path: '/engineer-dashboard', activeClass: 'bg-gray-700' },
         { name: 'Project Page', path: '/project-page', activeClass: 'bg-gray-700' },
-        { name: 'Profile', path: '/profile', activeClass: 'bg-gray-700' },
       ],
     };
   },
@@ -134,6 +176,10 @@ export default {
     },
     toggleDropdownMobile() {
       this.dropdownOpenMobile = !this.dropdownOpenMobile;
+    },
+    logout() {
+      // Implement logout functionality here
+      this.isLoggedIn = false;
     }
   }
 };
@@ -142,5 +188,12 @@ export default {
 <style scoped>
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, #1f2937, #111827);
+}
+
+img {
+  /* Adjust logo size and add padding if necessary */
+  max-height: 40px; /* Adjust this value as needed */
+  object-fit: contain; /* Ensures the logo maintains its aspect ratio */
+  margin-right: 1rem; /* Adds space between logo and navigation items */
 }
 </style>
