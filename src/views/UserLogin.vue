@@ -1,69 +1,76 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-cover bg-center" :style="{ backgroundImage: `url('/static/images/topping.webp')` }">
-    <div class="bg-white bg-opacity-90 shadow-lg rounded-lg p-8 max-w-md w-full">
+  <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+    <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+      
+      <!-- Message Display -->
       <div v-if="message" class="text-red-500 mb-4 text-center">{{ message }}</div>
       
+      <!-- Login/Sign Up Form -->
       <div v-if="action === 'Login' || action === 'Sign Up'" class="text-center">
-        <div class="text-2xl font-bold mb-4 text-gray-800">{{ action === 'Login' ? 'Login' : 'Sign Up' }}</div>
+        <h2 class="text-2xl font-bold mb-4">{{ action }}</h2>
         <form @submit.prevent="handleSubmit" class="space-y-4">
           <div v-if="action === 'Sign Up'" class="mb-4">
-            <label for="name" class="block text-sm font-medium text-gray-700">Username</label>
-            <input id="name" v-model="name" type="text" placeholder="Enter your username" class="input-field" required />
+            <label for="name" class="block text-sm font-medium">Username</label>
+            <input id="name" v-model="name" type="text" class="input-field" required />
           </div>
           <div class="mb-4">
-            <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-            <input id="email" v-model="email" type="email" placeholder="Enter your email" class="input-field" required />
+            <label for="email" class="block text-sm font-medium">Email</label>
+            <input id="email" v-model="email" type="email" class="input-field" required />
           </div>
           <div class="mb-4">
-            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-            <input id="password" v-model="password" type="password" placeholder="Enter your password" class="input-field" required />
+            <label for="password" class="block text-sm font-medium">Password</label>
+            <input id="password" v-model="password" type="password" class="input-field" required />
           </div>
           <div v-if="action === 'Sign Up'" class="mb-4">
-            <label for="role" class="block text-sm font-medium text-gray-700">Select Role</label>
+            <label for="role" class="block text-sm font-medium">Role</label>
             <select id="role" v-model="role" class="input-field" required>
-              <option value="" disabled>Select a role</option>
+              <option value="" disabled>Select Role</option>
               <option value="Admin">Admin</option>
               <option value="Manager">Manager</option>
               <option value="Engineer">Engineer</option>
             </select>
           </div>
-          <div class="flex items-center justify-center">
-            <button type="submit" class="btn" :disabled="loading">
-              {{ loading ? 'Processing...' : action === 'Login' ? 'Login' : 'Sign Up' }}
-            </button>
-          </div>
+          <button type="submit" class="btn w-full" :disabled="loading">
+            {{ loading ? 'Processing...' : action }}
+          </button>
         </form>
         <div class="mt-4 text-center">
-          <button @click="toggleAction" class="text-sm font-medium text-blue-500 hover:text-blue-700 focus:outline-none">
+          <button @click="toggleAction" class="text-sm font-medium text-blue-500 hover:text-blue-700">
             {{ action === 'Login' ? 'Create an account' : 'Already have an account? Login' }}
           </button>
-          <button @click="() => action = 'Forgot Password'" class="text-sm font-medium text-blue-500 hover:text-blue-700 focus:outline-none ml-4">
+          <button v-if="action === 'Login'" @click="() => action = 'Forgot Password'" class="text-sm font-medium text-blue-500 hover:text-blue-700 ml-4">
             Forgot password?
           </button>
         </div>
       </div>
 
+      <!-- Forgot Password Form -->
       <div v-if="action === 'Forgot Password'" class="text-center">
-        <div class="text-2xl font-bold mb-4 text-gray-800">Forgot Password</div>
+        <h2 class="text-2xl font-bold mb-4">Forgot Password</h2>
         <form @submit.prevent="handlePasswordReset" class="space-y-4">
           <div class="mb-4">
-            <label for="resetEmail" class="block text-sm font-medium text-gray-700">Email address</label>
-            <input id="resetEmail" v-model="resetEmail" type="email" placeholder="Enter your email" class="input-field" required />
+            <label for="resetEmail" class="block text-sm font-medium">Email</label>
+            <input id="resetEmail" v-model="resetEmail" type="email" class="input-field" required />
           </div>
           <div class="mb-4">
-            <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
-            <input id="newPassword" v-model="newPassword" type="password" placeholder="Enter new password" class="input-field" required />
+            <label for="newPassword" class="block text-sm font-medium">New Password</label>
+            <input id="newPassword" v-model="newPassword" type="password" class="input-field" required />
           </div>
           <div class="mb-4">
-            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-            <input id="confirmPassword" v-model="confirmPassword" type="password" placeholder="Confirm new password" class="input-field" required />
+            <label for="confirmPassword" class="block text-sm font-medium">Confirm Password</label>
+            <input id="confirmPassword" v-model="confirmPassword" type="password" class="input-field" required />
           </div>
-          <div class="flex items-center justify-center">
-            <button type="submit" class="btn" :disabled="loading">
-              {{ loading ? 'Processing...' : 'Reset Password' }}
-            </button>
-          </div>
+          <button type="submit" class="btn w-full" :disabled="loading">
+            {{ loading ? 'Processing...' : 'Reset Password' }}
+          </button>
         </form>
+      </div>
+
+      <!-- Logout Button (Only visible when authenticated) -->
+      <div v-if="authenticated" class="mt-4 text-center">
+        <button @click="handleLogout" class="btn w-full">
+          Logout
+        </button>
       </div>
     </div>
   </div>
@@ -74,12 +81,12 @@ import axios from 'axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const BASE_URL = 'http://localhost:8000'; // replace with your actual base URL
+const BASE_URL = 'http://localhost:8000';
 
 export default {
   setup() {
     const router = useRouter();
-    const action = ref('Login'); // 'Login', 'Sign Up', or 'Forgot Password'
+    const action = ref('Login');
     const email = ref('');
     const password = ref('');
     const name = ref('');
@@ -89,6 +96,7 @@ export default {
     const confirmPassword = ref('');
     const message = ref('');
     const loading = ref(false);
+    const authenticated = ref(localStorage.getItem('token') !== null);
 
     const handleSubmit = async () => {
       message.value = '';
@@ -111,6 +119,9 @@ export default {
       try {
         const response = await axios.post(`${BASE_URL}/api/api/login/`, { email: email.value, password: password.value });
         if (response.status === 200) {
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('role', response.data.role); // Assuming role is returned
+          authenticated.value = true;
           message.value = 'Login successful!';
           router.push('/Dashboard');
         } else {
@@ -161,6 +172,13 @@ export default {
       action.value = action.value === 'Login' ? 'Sign Up' : 'Login';
     };
 
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      authenticated.value = false;
+      router.push('/');
+    };
+
     return {
       action,
       email,
@@ -172,9 +190,11 @@ export default {
       confirmPassword,
       message,
       loading,
+      authenticated,
       handleSubmit,
       handlePasswordReset,
-      toggleAction
+      toggleAction,
+      handleLogout
     };
   }
 };
@@ -182,9 +202,11 @@ export default {
 
 <style scoped>
 .input-field {
-  border: 1px solid #ddd;
-  border-radius: 0.375rem;
+  width: 100%;
   padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  font-size: 1rem;
   transition: border-color 0.2s;
 }
 
@@ -200,6 +222,7 @@ export default {
   padding: 0.5rem 1.5rem;
   border-radius: 9999px;
   text-transform: uppercase;
+  cursor: pointer;
   transition: background 0.3s;
 }
 

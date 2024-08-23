@@ -88,6 +88,11 @@ export default {
           activeClass: 'bg-blue-700',
         },
         {
+          name: 'Project Page',
+          path: '/project-page',
+          activeClass: 'bg-blue-700',
+        },
+        {
           name: 'Admin Dashboard',
           path: '/admin-dashboard',
           activeClass: 'bg-blue-700',
@@ -102,6 +107,7 @@ export default {
           path: '/engineer-dashboard',
           activeClass: 'bg-blue-700',
         },
+        { name: 'Profile', path: '/profile', activeClass: 'bg-blue-700' }, // Added Profile link
       ],
     };
   },

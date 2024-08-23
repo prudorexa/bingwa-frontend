@@ -114,6 +114,7 @@ export default {
           alert('Project updated successfully!');
         } catch (error) {
           console.error('Error updating project:', error);
+          this.error = 'Failed to update the project';
         }
       }
     },
